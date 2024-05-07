@@ -1,80 +1,93 @@
-import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useAuth } from 'react-oidc-context';
-import { API_BASE_URL } from '../environment';
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useAuth } from "react-oidc-context";
+import { API_BASE_URL } from "../environment";
+import Button from "./button";
 
 interface User {
-    name: string;
+  DisplayName: string;
 }
 
 const Navbar = () => {
-    const auth = useAuth()
-    const [user, setUser] = useState<User | null>(null);
+  const auth = useAuth();
+  const [user, setUser] = useState<User>();
 
-    useEffect (() => {
-        const fetchUser = async () => {
-            try {
-                const token = auth.user!.access_token; 
-                const res = await getCurrentUser(token);
-                setUser(res);
-            } catch (error) {
-                console.error("couldn't fetch user: ", error)
-            }
-        };
-        fetchUser();
-    }, []);
-    const navStyle = {
-        display: "flex",
-        width: "100%",
-        background: "#333",
-        color: "#fff",
-        padding: "10px",
-    }
-    const ulStyle = {
-        display: "flex",
-        justifyContent: "space-between",
-        listStyle: "none",
-    }
-    const liStyle = {
-        color: "#fff",
-        textDecoration: "none",
-    }
-    return (
-        <>
-        <nav style={navStyle}>
-            <div className='logo'>
-                <h1>Logo</h1>
-            </div>
-            <ul style={ulStyle}>
-                <li style={liStyle}>
-                    <Link to="/pages/home">Min Oversikt</Link>
-                </li>
-                <li style={liStyle}>
-                    <Link to="/pages/home">Ansattfordeler</Link>
-                </li>
-                <li style={liStyle}>
-                    <Link to="/pages/home">Mine Kontakter</Link>
-                </li>
-            </ul>
-            <button className='temp' onClick={() => void console.log('clicked')}>{user ? user.name : 'Loading...'}</button>
-        </nav>
-        </>
-    )
-}
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const token = auth.user!.access_token;
+        const res = await getCurrentUser(token);
+        console.log(res);
+        setUser(res);
+      } catch (error) {
+        console.error("couldn't fetch user: ", error);
+      }
+    };
+    fetchUser();
+  }, []);
 
+  const navStyle = {
+    display: "flex",
+    height: "80px",
+    width: "100%",
+    background: "white",
+    justifyContent: "space-between",
+    alignItems: "center",
+    border: "1px solid red",
+  };
+  const ulStyle = {
+    display: "flex",
+    justifyContent: "space-around",
+    width: "50%",
+    listStyle: "none",
+    border: "1px solid red",
+  };
+  const liStyle = {
+    textDecoration: "none",
+    border: "1px solid red",
+  };
+  const logoStyle = {
+    display: "flex",
+    marginLeft: "2%",
+    justifyContent: "center",
+    alignItems: "center",
+    border: "1px solid red",
+  };
+  return (
+      <div style={navStyle}>
+        <div style={logoStyle}>
+          <p>Logo</p>
+        </div>
+        <ul style={ulStyle}>
+          <li style={liStyle}>
+            <Link to="/pages/home" style={{textDecoration: "None", color: "black"}}>Min Oversikt</Link>
+          </li>
+          <li style={liStyle}>
+            <Link to="/pages/home"style={{textDecoration: "None", color: "black"}}>Ansattfordeler</Link>
+          </li>
+          <li style={liStyle}>
+            <Link to="/pages/home"style={{textDecoration: "None", color: "black"}}>Mine Kontakter</Link>
+          </li>
+        </ul>
+        <Button
+          key={user?.DisplayName}
+          text={user ? user.DisplayName : "Hello"}
+          onClick={() => void console.log("clicked")}
+        ></Button>
+      </div>
+  );
+};
 
 async function getCurrentUser(token: string) {
-    const res = await fetch(API_BASE_URL + '/biz/users?action=current-session', {
-        headers: { Authorization: 'Bearer ' + token }
-    });
-
-    if (res.ok) {
-        const user = await res.json();
-        //window.alert('Current user: ' + (user.Name || user.UserName || user.Email));
-        return user;
-    } else {
-        console.log('Error: ' + await res.text());
-    }
+  const res = await fetch(API_BASE_URL + "/biz/users?action=current-session", {
+    headers: { Authorization: "Bearer " + token },
+  });
+  if (res.ok) {
+    const user = await res.json();
+    return user;
+  } else {
+    console.log("Error: " + (await res.text()));
+  }
 }
 
 export default Navbar;
