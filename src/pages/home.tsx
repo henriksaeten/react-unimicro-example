@@ -4,6 +4,7 @@ import { API_BASE_URL } from "../environment";
 import CSS from "csstype";
 import Button from "../components/button";
 import Navbar from "../components/navbar";
+import { useNavigate } from "react-router-dom";
 
 interface Users {
   ID: number;
@@ -15,8 +16,14 @@ interface Users {
 
 const Home = () => {
   const auth = useAuth();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [users, setUsers] = useState<Users[]>([]);
+
+  const changeView = () => {
+    navigate("/change")
+  }
+
   useEffect(() => {
     const getContacts = async () => {
       try {
@@ -47,23 +54,25 @@ const Home = () => {
 
   return (
     <>
-    <Navbar/>
-    <div style={rootStyle}>
-      <div style={containerStyle}>
-        <h2 style={headingStyle}>Mine Kontakter</h2>
-        <ul style={ulStyle}>
-          {users.map(({ ID, Info }) => {
-            return (
-              <li key={ID} style={liStyle}>
-                <div style={textStyle}>{Info.Name}</div>
-                <div style={textStyle}>Phone: {Info.DefaultPhone.Number}</div>
-              </li>
-            );
-          })}
-        </ul>
+      <Navbar />
+      <div style={rootStyle}>
+        <div style={containerStyle}>
+          <h2 style={headingStyle}>Mine Kontakter</h2>
+          <ul style={ulStyle}>
+            {users.map(({ ID, Info }) => {
+              return (
+                <li key={ID} style={liStyle}>
+                  <div style={textStyle}>{Info.Name}</div>
+                  <div style={textStyle}>Phone: {Info.DefaultPhone.Number}</div>
+                </li>
+              );
+            })}
+          </ul>
+          <div>
+            <Button text={"Endre"} onClick={changeView} />
+          </div>
+        </div>
       </div>
-    </div>
-    <Button text={"Endre"} onClick={changeView}/>
     </>
   );
 };
@@ -72,22 +81,22 @@ const rootStyle: CSS.Properties = {
   textAlign: "center",
   justifyContent: "center",
   marginTop: "20px",
-  //border: "1px solid red",
+  border: "1px solid red",
 };
 const containerStyle: CSS.Properties = {
   width: "50%",
   display: "flex",
   flexDirection: "column",
   textAlign: "center",
-  //border: "1px solid red",
+  border: "1px solid red",
 };
 const headingStyle: CSS.Properties = {
   fontSize: "2.0rem",
-  //border: "1px solid red",
+  border: "1px solid red",
 };
 const ulStyle: CSS.Properties = {
   listStyle: "none",
-  //border: "1px solid red",
+  border: "1px solid red",
 };
 const liStyle: CSS.Properties = {
   display: "flex",
@@ -95,16 +104,12 @@ const liStyle: CSS.Properties = {
   textDecoration: "none",
   textAlign: "left",
   marginBottom: "20px",
-  marginLeft: "20%"
+  marginLeft: "20%",
 };
 const textStyle: CSS.Properties = {
-    flexBasis: "100%",
-    textAlign: "left",
-    //border: "1px solid red",
-    fontSize: "20px"
-}
-
-function changeView() {
-
-}
+  flexBasis: "100%",
+  textAlign: "left",
+  border: "1px solid red",
+  fontSize: "20px",
+};
 export default Home;

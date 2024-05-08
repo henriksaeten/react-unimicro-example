@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { API_BASE_URL } from "../environment";
 import Button from "./button";
-
+import CSS from "csstype";
 interface User {
   DisplayName: string;
 }
@@ -33,25 +33,25 @@ const Navbar = () => {
         </div>
         <ul style={ulStyle}>
           <li style={liStyle}>
-            <Link to="/pages/home" style={{textDecoration: "None", color: "black"}}>Min Oversikt</Link>
+            <Link to="/home" style={{textDecoration: "None", color: "black"}}>Min Oversikt</Link>
           </li>
           <li style={liStyle}>
-            <Link to="/pages/home"style={{textDecoration: "None", color: "black"}}>Ansattfordeler</Link>
+            <Link to="/home"style={{textDecoration: "None", color: "black"}}>Ansattfordeler</Link>
           </li>
           <li style={liStyle}>
-            <Link to="/pages/home"style={{textDecoration: "None", color: "black"}}>Mine Kontakter</Link>
+            <Link to="/home"style={{textDecoration: "None", color: "black"}}>Mine Kontakter</Link>
           </li>
         </ul>
         <Button
           key={user?.DisplayName}
-          text={user ? user.DisplayName : "Hello"}
+          text={user ? user.DisplayName : "Loading..."}
           onClick={() => void console.log("clicked")}
         ></Button>
       </div>
   );
 };
 
-const navStyle = {
+const navStyle: CSS.Properties = {
     display: "flex",
     height: "80px",
     width: "100%",
@@ -60,18 +60,18 @@ const navStyle = {
     alignItems: "center",
     border: "1px solid red",
   };
-  const ulStyle = {
+  const ulStyle: CSS.Properties = {
     display: "flex",
     justifyContent: "space-around",
     width: "50%",
     listStyle: "none",
     border: "1px solid red",
   };
-  const liStyle = {
+  const liStyle: CSS.Properties = {
     textDecoration: "none",
     border: "1px solid red",
   };
-  const logoStyle = {
+  const logoStyle: CSS.Properties = {
     display: "flex",
     marginLeft: "2%",
     justifyContent: "center",
