@@ -1,24 +1,24 @@
-import { useAuth } from 'react-oidc-context'
+//import { useAuth } from 'react-oidc-context'
 //import { API_BASE_URL } from './environment';
 import './App.css'
 //import { useState } from 'react';
-import Navbar from './components/navbar';
-import Home from './pages/home';
+//import Navbar from './components/navbar';
+import AppRoutes from './routes';
+//import Home from './pages/home';
 
 
 function App() {
-    const auth = useAuth();
+    //const auth = useAuth();
     //const [isLoading, setIsLoading] = useState(false);
     
-    if (!auth.isAuthenticated) {
-        return <button onClick={() => void auth.signinRedirect()}>Log in</button>;
-    }
+    //if (!auth.isAuthenticated) {
+    //    return <button onClick={() => void auth.signinRedirect()}>Log in</button>;
+    //}
+    //            <Navbar />
     return (
         <main>
-            <Navbar />
-
-            <Home/>
-
+            <AppRoutes />
+            {/*<Home/>*/}
             {/*<span>Authenticated!</span>
             <button onClick={() => sendTestRequest(auth.user!.access_token)}> 
                 Send test request

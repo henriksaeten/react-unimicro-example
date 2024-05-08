@@ -26,7 +26,32 @@ const Navbar = () => {
     fetchUser();
   }, []);
 
-  const navStyle = {
+  return (
+      <div style={navStyle}>
+        <div style={logoStyle}>
+          <p>Logo</p>
+        </div>
+        <ul style={ulStyle}>
+          <li style={liStyle}>
+            <Link to="/pages/home" style={{textDecoration: "None", color: "black"}}>Min Oversikt</Link>
+          </li>
+          <li style={liStyle}>
+            <Link to="/pages/home"style={{textDecoration: "None", color: "black"}}>Ansattfordeler</Link>
+          </li>
+          <li style={liStyle}>
+            <Link to="/pages/home"style={{textDecoration: "None", color: "black"}}>Mine Kontakter</Link>
+          </li>
+        </ul>
+        <Button
+          key={user?.DisplayName}
+          text={user ? user.DisplayName : "Hello"}
+          onClick={() => void console.log("clicked")}
+        ></Button>
+      </div>
+  );
+};
+
+const navStyle = {
     display: "flex",
     height: "80px",
     width: "100%",
@@ -53,31 +78,6 @@ const Navbar = () => {
     alignItems: "center",
     border: "1px solid red",
   };
-  return (
-      <div style={navStyle}>
-        <div style={logoStyle}>
-          <p>Logo</p>
-        </div>
-        <ul style={ulStyle}>
-          <li style={liStyle}>
-            <Link to="/pages/home" style={{textDecoration: "None", color: "black"}}>Min Oversikt</Link>
-          </li>
-          <li style={liStyle}>
-            <Link to="/pages/home"style={{textDecoration: "None", color: "black"}}>Ansattfordeler</Link>
-          </li>
-          <li style={liStyle}>
-            <Link to="/pages/home"style={{textDecoration: "None", color: "black"}}>Mine Kontakter</Link>
-          </li>
-        </ul>
-        <Button
-          key={user?.DisplayName}
-          text={user ? user.DisplayName : "Hello"}
-          onClick={() => void console.log("clicked")}
-        ></Button>
-      </div>
-  );
-};
-
 async function getCurrentUser(token: string) {
   const res = await fetch(API_BASE_URL + "/biz/users?action=current-session", {
     headers: { Authorization: "Bearer " + token },

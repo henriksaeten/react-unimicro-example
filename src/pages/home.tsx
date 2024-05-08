@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { API_BASE_URL } from "../environment";
 import CSS from "csstype";
+import Button from "../components/button";
+import Navbar from "../components/navbar";
 
 interface Users {
   ID: number;
   Info: {
     Name: string;
-    DefaultEmail: { EmailAddress: string };
     DefaultPhone: { Number: string };
   };
 }
@@ -45,41 +46,65 @@ const Home = () => {
   }, []);
 
   return (
+    <>
+    <Navbar/>
     <div style={rootStyle}>
+      <div style={containerStyle}>
         <h2 style={headingStyle}>Mine Kontakter</h2>
-    <ul style={ulStyle}>
-        {users.map(({ ID, Info }) => {
-          return (
-            <li key={ID} style={liStyle}>
-              <div>name: {Info.Name}</div>
-              <div>Email: {Info.DefaultEmail.EmailAddress}</div>
-              <div>Phone: {Info.DefaultPhone.Number}</div>
-              <hr />
-            </li>
-          );
-        })}
-      </ul>
+        <ul style={ulStyle}>
+          {users.map(({ ID, Info }) => {
+            return (
+              <li key={ID} style={liStyle}>
+                <div style={textStyle}>{Info.Name}</div>
+                <div style={textStyle}>Phone: {Info.DefaultPhone.Number}</div>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </div>
+    <Button text={"Endre"} onClick={changeView}/>
+    </>
   );
 };
+const rootStyle: CSS.Properties = {
+  display: "flex",
+  textAlign: "center",
+  justifyContent: "center",
+  marginTop: "20px",
+  //border: "1px solid red",
+};
+const containerStyle: CSS.Properties = {
+  width: "50%",
+  display: "flex",
+  flexDirection: "column",
+  textAlign: "center",
+  //border: "1px solid red",
+};
+const headingStyle: CSS.Properties = {
+  fontSize: "2.0rem",
+  //border: "1px solid red",
+};
+const ulStyle: CSS.Properties = {
+  listStyle: "none",
+  //border: "1px solid red",
+};
+const liStyle: CSS.Properties = {
+  display: "flex",
+  //justifyContent: "space-around",
+  textDecoration: "none",
+  textAlign: "left",
+  marginBottom: "20px",
+  marginLeft: "20%"
+};
+const textStyle: CSS.Properties = {
+    flexBasis: "100%",
+    textAlign: "left",
+    //border: "1px solid red",
+    fontSize: "20px"
+}
 
-  const rootStyle: CSS.Properties = {
-    display: "flex",
-    flexDirection: "column",
-    textAlign: "center",
-    border: "1px solid red"
-  }
-  const headingStyle = {
-    fontSize: "2.0rem",
-    border: "1px solid red"
-  }
-  const ulStyle: CSS.Properties = {
-    listStyle: "none",
-    border: "1px solid red"
-  }
-  const liStyle: CSS.Properties = {
-    textDecoration: "none",
-    textAlign: "left"
-  }
+function changeView() {
 
+}
 export default Home;
