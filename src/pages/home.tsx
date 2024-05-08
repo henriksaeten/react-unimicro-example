@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { API_BASE_URL } from "../environment";
-import CSS from "csstype";
 import Button from "../components/button";
 import Navbar from "../components/navbar";
 import { useNavigate } from "react-router-dom";
+import "../styles/home.css"
 
 interface Users {
   ID: number;
@@ -55,15 +55,15 @@ const Home = () => {
   return (
     <>
       <Navbar />
-      <div style={rootStyle}>
-        <div style={containerStyle}>
-          <h2 style={headingStyle}>Mine Kontakter</h2>
-          <ul style={ulStyle}>
+      <div className="root" >
+        <div className="container" >
+          <h2 className="header" >Mine Kontakter</h2>
+          <ul >
             {users.map(({ ID, Info }) => {
               return (
-                <li key={ID} style={liStyle}>
-                  <div style={textStyle}>{Info.Name}</div>
-                  <div style={textStyle}>Phone: {Info.DefaultPhone.Number}</div>
+                <li key={ID} >
+                  <div >{Info.Name}</div>
+                  <div >Phone: {Info.DefaultPhone.Number}</div>
                 </li>
               );
             })}
@@ -75,41 +75,5 @@ const Home = () => {
       </div>
     </>
   );
-};
-const rootStyle: CSS.Properties = {
-  display: "flex",
-  textAlign: "center",
-  justifyContent: "center",
-  marginTop: "20px",
-  border: "1px solid red",
-};
-const containerStyle: CSS.Properties = {
-  width: "50%",
-  display: "flex",
-  flexDirection: "column",
-  textAlign: "center",
-  border: "1px solid red",
-};
-const headingStyle: CSS.Properties = {
-  fontSize: "2.0rem",
-  border: "1px solid red",
-};
-const ulStyle: CSS.Properties = {
-  listStyle: "none",
-  border: "1px solid red",
-};
-const liStyle: CSS.Properties = {
-  display: "flex",
-  //justifyContent: "space-around",
-  textDecoration: "none",
-  textAlign: "left",
-  marginBottom: "20px",
-  marginLeft: "20%",
-};
-const textStyle: CSS.Properties = {
-  flexBasis: "100%",
-  textAlign: "left",
-  border: "1px solid red",
-  fontSize: "20px",
 };
 export default Home;

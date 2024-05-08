@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { API_BASE_URL } from "../environment";
 import Button from "./button";
-import CSS from "csstype";
+import "../styles/navbar.css"
 interface User {
   DisplayName: string;
 }
@@ -27,18 +27,18 @@ const Navbar = () => {
   }, []);
 
   return (
-      <div style={navStyle}>
-        <div style={logoStyle}>
+      <div className="navbar">
+        <div className="logo">
           <p>Logo</p>
         </div>
-        <ul style={ulStyle}>
-          <li style={liStyle}>
+        <ul> 
+          <li>
             <Link to="/home" style={{textDecoration: "None", color: "black"}}>Min Oversikt</Link>
           </li>
-          <li style={liStyle}>
+          <li>
             <Link to="/home"style={{textDecoration: "None", color: "black"}}>Ansattfordeler</Link>
           </li>
-          <li style={liStyle}>
+          <li>
             <Link to="/home"style={{textDecoration: "None", color: "black"}}>Mine Kontakter</Link>
           </li>
         </ul>
@@ -51,33 +51,6 @@ const Navbar = () => {
   );
 };
 
-const navStyle: CSS.Properties = {
-    display: "flex",
-    height: "80px",
-    width: "100%",
-    background: "white",
-    justifyContent: "space-between",
-    alignItems: "center",
-    border: "1px solid red",
-  };
-  const ulStyle: CSS.Properties = {
-    display: "flex",
-    justifyContent: "space-around",
-    width: "50%",
-    listStyle: "none",
-    border: "1px solid red",
-  };
-  const liStyle: CSS.Properties = {
-    textDecoration: "none",
-    border: "1px solid red",
-  };
-  const logoStyle: CSS.Properties = {
-    display: "flex",
-    marginLeft: "2%",
-    justifyContent: "center",
-    alignItems: "center",
-    border: "1px solid red",
-  };
 async function getCurrentUser(token: string) {
   const res = await fetch(API_BASE_URL + "/biz/users?action=current-session", {
     headers: { Authorization: "Bearer " + token },
