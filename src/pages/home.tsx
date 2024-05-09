@@ -55,9 +55,10 @@ const Home = () => {
   return (
     <>
       <Navbar />
+      {isLoading && "Loading..."}
       <div className="root" >
         <div className="container" >
-          <h2 className="header" >Mine Kontakter</h2>
+          <h2 className="header">Mine Kontakter</h2>
           <ul >
             {users.map(({ ID, Info }) => {
               return (
