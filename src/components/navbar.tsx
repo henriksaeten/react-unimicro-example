@@ -17,7 +17,6 @@ const Navbar = () => {
       try {
         const token = auth.user!.access_token;
         const res = await getCurrentUser(token);
-        console.log(res);
         setUser(res);
       } catch (error) {
         console.error("couldn't fetch user: ", error);
