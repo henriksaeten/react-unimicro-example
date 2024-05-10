@@ -5,23 +5,19 @@
     background: white;
     justify-content: space-between;
     align-items: center;
-    border: 1px solid red;
 }
 .logo {
     display: flex;
     margin-left: 2%;
     justify-content: center;
     align-items: center;
-    border: 1px solid red;
 }
 .navbar ul {
     display: flex;
     justify-content: space-around;
     width: 50%;
     list-style: none;
-    border: 1px solid red;
 }
 .navbar li {
     text-decoration: none;
-    border: 1px solid red;
 }

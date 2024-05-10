@@ -4,25 +4,20 @@ import { API_BASE_URL } from "../environment";
 import Button from "../components/button";
 import Navbar from "../components/navbar";
 import { useNavigate } from "react-router-dom";
-import "../styles/home.css"
-
-interface Users {
-  ID: number;
-  Info: {
-    Name: string;
-    DefaultPhone: { Number: string };
-  };
-}
+import "../styles/home.css";
+import UserComponent from "../components/userComponent";
+import User  from "../types/user"
 
 const Home = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [users, setUsers] = useState<Users[]>([]);
+  const [User, setUser] = useState<User[]>([]);
+  const [isEditMode, setIsEditMode] = useState(true);
 
   const changeView = () => {
-    navigate("/change")
-  }
+    navigate("/change");
+  };
 
   useEffect(() => {
     const getContacts = async () => {
@@ -41,7 +36,7 @@ const Home = () => {
             }
           ).then((res) => res.json());
           console.log(contacts.data);
-          setUsers(contacts);
+          setUser(contacts);
         }
       } catch (error) {
         console.log(error);
@@ -52,26 +47,32 @@ const Home = () => {
     getContacts();
   }, []);
 
+  
+  const editContacts = () => {
+    setIsEditMode(!isEditMode);
+  };
+
+
   return (
     <>
       <Navbar />
       {isLoading && "Loading..."}
-      <div className="root" >
-        <div className="container" >
+      <div className="root">
+        <div className="container">
           <h2 className="header">Mine Kontakter</h2>
-          <ul >
-            {users.map(({ ID, Info }) => {
-              return (
-                <li key={ID} >
-                  <div >{Info.Name}</div>
-                  <div >Phone: {Info.DefaultPhone.Number}</div>
-                </li>
-              );
-            })}
+          <ul>
+            {User.map((user) => (
+              <UserComponent key={user.ID} user={user} isEditMode={isEditMode} editContacts={editContacts}/>
+            ))}
           </ul>
+          <div className="buttons">
           <div>
-            <Button text={"Endre"} onClick={changeView} />
+            <Button text={"Legg til ny kontakt"} onClick={changeView} />
           </div>
+          <div>
+            <Button text={"Endre kontakter"} onClick={editContacts} />
+          </div>
+        </div>
         </div>
       </div>
     </>
