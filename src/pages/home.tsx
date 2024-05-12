@@ -5,14 +5,14 @@ import Button from "../components/button";
 import Navbar from "../components/navbar";
 import "../styles/home.css";
 import UserComponent from "../components/userComponent";
-import {User}  from "../types/user"
+import { User } from "../types/user";
 
 const Home = () => {
   const auth = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [User, setUser] = useState<User[]>([]);
   const [isEditMode, setIsEditMode] = useState(true);
-  
+  const [isNewUser, setIsNewUser] = useState(false);
 
   useEffect(() => {
     const getContacts = async () => {
@@ -32,30 +32,38 @@ const Home = () => {
           ).then((res) => res.json());
           console.log(contacts);
           if (contacts) {
-            setUser(contacts.map((contact: User) => ({
-              ...contact,
-                        Info: {
-                          ...contact.Info,
-                          DefaultPhone: contact.Info.DefaultPhone ? contact.Info.DefaultPhone : { Number: "" },
-                        }
-                      })));
-                  }
-                }} finally {
-                  setIsLoading(false);
-                }
-              };
-              getContacts();
+            setUser(
+              contacts.map((contact: User) => ({
+                ...contact,
+                Info: {
+                  ...contact.Info,
+                  DefaultPhone: contact.Info.DefaultPhone
+                    ? contact.Info.DefaultPhone
+                    : { Number: "" },
+                },
+              }))
+            );
+          }
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    getContacts();
   }, []);
-  
+
   const editContacts = () => {
     setIsEditMode(!isEditMode);
+  };
+
+  const setNewUser = () => {
+    setIsNewUser(!isNewUser);
   };
 
   const addNewUser = () => {
     const newUser = {
       ID: Math.random(),
       InfoID: Math.random(),
-      _createguid: crypto.randomUUID(),
       Info: {
         Name: "",
         DefaultPhone: {
@@ -65,9 +73,10 @@ const Home = () => {
         },
       },
     };
-    setUser((prevUsers) => [...prevUsers, newUser])
+    setUser((prevUsers) => [...prevUsers, newUser]);
     editContacts();
-  }
+    setNewUser();
+  };
 
   return (
     <>
@@ -78,17 +87,24 @@ const Home = () => {
           <h2 className="header">Mine Kontakter</h2>
           <ul>
             {User.map((user) => (
-              <UserComponent key={user.InfoID} user={user} isEditMode={isEditMode} editContacts={editContacts}/>
+              <UserComponent
+                key={user.InfoID}
+                user={user}
+                isEditMode={isEditMode}
+                editContacts={editContacts}
+                isNewUser={isNewUser}
+                setNewUser={setNewUser}
+              />
             ))}
           </ul>
           <div className="buttons">
-          <div>
-            <Button text={"Legg til ny kontakt"} onClick={addNewUser} />
+            <div>
+              <Button text={"Legg til ny kontakt"} onClick={addNewUser} />
+            </div>
+            <div>
+              <Button text={"Endre kontakter"} onClick={editContacts} />
+            </div>
           </div>
-          <div>
-            <Button text={"Endre kontakter"} onClick={editContacts} />
-          </div>
-        </div>
         </div>
       </div>
     </>
