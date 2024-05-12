@@ -17,6 +17,8 @@ const Home = () => {
   const [isEditMode, setIsEditMode] = useState(true);
   const [isNewUser, setIsNewUser] = useState(false);
   const [buttonText, setButtonText] = useState("Legg til");
+  const [query, setQuery] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
 
   useEffect(() => {
     const getContacts = async () => {
@@ -47,6 +49,7 @@ const Home = () => {
                 },
               }))
             );
+            setFilteredUsers(contacts)
             if (contacts && contacts.length > 0) {
               setIsEdited(contacts.map(() => false));
             }
@@ -115,8 +118,8 @@ const Home = () => {
   };
 
   const deleteUser = (id: number) => {
-    const currentUser = user[id];
-    const myUrl = `${API_BASE_URL}biz/contacts/${currentUser.ID}`;
+    const currentUser = user.filter((item) => item.ID === id).pop()
+    const myUrl = `${API_BASE_URL}biz/contacts/${currentUser!.ID}`;
     const method = "DELETE";
     apiCall(method, myUrl, "");
     setIsEdited(prev => prev.filter((_: boolean, index: number) => index != id));
@@ -138,6 +141,7 @@ const Home = () => {
       },
     };
     setUser((prevUsers) => [...prevUsers, newUser]);
+    setFilteredUsers((prevUser) => [...prevUser, newUser])
     setIsEdited((prevUser) => [...prevUser, false]);
     editContacts();
     setNewUser();
@@ -227,6 +231,13 @@ const Home = () => {
     });
   };
 
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+   const search = event.target.value;
+   setQuery(search);
+   const filtered = user.filter((currentUser) => currentUser.Info.Name.toLowerCase().includes(search.toLowerCase()));
+   setFilteredUsers(filtered);
+  }
+  
   return (
     <>
       <Navbar />
@@ -235,8 +246,9 @@ const Home = () => {
       <div className="root">
         <div className="container">
           <h2 className="header">Mine Kontakter</h2>
+          <input type="search" placeholder="Søk etter kontakter" value={query} onChange={handleSearch}></input>
           <ul>
-            {user.map((currentUser, id) => (
+            {filteredUsers.map((currentUser, id) => (
               <li key={currentUser.InfoID}>
                 <input
                   type="text"
@@ -255,7 +267,7 @@ const Home = () => {
                   style={!isEditMode ? { border: "1px solid black" } : {}}
                 />
                 {!isEditMode ? (
-                  <Button text={"Slett"} onClick={() => deleteUser(id)} />
+                  <Button text={"Slett"} onClick={() => deleteUser(currentUser.ID)} />
                 ) : (
                   ""
                 )}
