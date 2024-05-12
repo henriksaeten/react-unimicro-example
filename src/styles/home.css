@@ -33,3 +33,7 @@
   display: flex;
   justify-content: center;
 }
+.container li input{
+  border: 0;
+  font-size: 20px;
+}
