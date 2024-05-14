@@ -4,7 +4,6 @@ import { API_BASE_URL } from "../environment";
 import Button from "../components/button";
 import Navbar from "../components/navbar";
 import "../styles/home.css";
-//import UserComponent from "../components/userComponent";
 import { User } from "../types/user";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
