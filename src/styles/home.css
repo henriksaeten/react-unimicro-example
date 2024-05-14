@@ -2,8 +2,6 @@
   display: flex;
   text-align: center;
   justify-content: center;
-  margin-top: 20px;
-  /*border: 1px solid red;*/
 }
 .container {
   width: 50%;
@@ -16,24 +14,23 @@
 }
 .container ul {
   list-style: none;
+  align-items: center;
 }
 .container li {
-  display: flex;
-  text-decoration: none;
-  text-align: left;
   margin-bottom: 20px;
-  margin-left: 20%;
 }
-.container li div {
-  flex-basis: 100%;
-  text-align: left;
-  font-size: 20px;
-}
+
 .buttons {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
+  width: 50%;
+  align-items: center;
 }
 .container li input{
   border: 0;
-  font-size: 20px;
+  text-align: left;
+  font-size: 1.3rem;
+}
+.search {
+  font-size: 1.3rem;
 }

@@ -12,7 +12,6 @@ const Button = ({ text, onClick }: ButtonProps) => {
         borderRadius: '60px',
         width: '150px',
         height: '50px',
-        marginRight: '30px',
         cursor: 'pointer',
         border: 'none',
     };

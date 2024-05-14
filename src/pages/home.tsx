@@ -11,13 +11,14 @@ import "react-toastify/dist/ReactToastify.css";
 const Home = () => {
   const auth = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<User[]>([]);
+  const [apiUser, setApiUser] = useState<User[]>([]);
   const [isEdited, setIsEdited] = useState<boolean[]>([]);
-  const [isEditMode, setIsEditMode] = useState(true);
+  const [isReadOnly, setIsReadOnly] = useState(true);
   const [isNewUser, setIsNewUser] = useState(false);
   const [buttonText, setButtonText] = useState("Legg til");
   const [query, setQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [filteredIsEdited, setFilteredIsEdited] = useState<boolean[]>([]);
 
   useEffect(() => {
     const getContacts = async () => {
@@ -37,7 +38,7 @@ const Home = () => {
           ).then((res) => res.json());
           console.log(contacts);
           if (contacts) {
-            setUser(
+            setApiUser(
               contacts.map((contact: User) => ({
                 ...contact,
                 Info: {
@@ -48,25 +49,23 @@ const Home = () => {
                 },
               }))
             );
-            setFilteredUsers(contacts)
+            setFilteredUsers(contacts);
             if (contacts && contacts.length > 0) {
               setIsEdited(contacts.map(() => false));
             }
+            setFilteredIsEdited(isEdited);
           }
         }
       } finally {
         setIsLoading(false);
+        console.log(auth.user?.access_token)
       }
     };
     getContacts();
   }, []);
 
-  useEffect(() => {
-    console.log(isEdited);
-  }, [isEdited]);
-
   const editContacts = () => {
-    setIsEditMode(!isEditMode);
+    setIsReadOnly(!isReadOnly);
     setButtonText("Lagre");
   };
 
@@ -75,16 +74,16 @@ const Home = () => {
   };
 
   const addNewUser = () => {
-    user.map((currentUser) => {
-      const index = user.indexOf(currentUser);
-      const update = isEdited[index];
+    filteredUsers.map((currentUser) => {
+      const index = filteredUsers.indexOf(currentUser);
+      const update = filteredIsEdited[index];
       if (update) {
         const myUrl = API_BASE_URL + "biz/contacts";
         const method = "POST";
         const content = {
           Info: {
             Name: currentUser.Info.Name,
-            DefaultPhone: currentUser.Info.DefaultPhone
+            DefaultPhone: currentUser.Info.DefaultPhone.Number
               ? {
                   CountryCode: currentUser.Info.DefaultPhone.CountryCode,
                   Description: currentUser.Info.DefaultPhone.Description,
@@ -102,9 +101,9 @@ const Home = () => {
   };
 
   const updateUser = () => {
-    user.map((currentUser) => {
-      const index = user.indexOf(currentUser);
-      const shouldUpdate = isEdited[index];
+    filteredUsers.map((currentUser) => {
+      const index = filteredUsers.indexOf(currentUser);
+      const shouldUpdate = filteredIsEdited[index];
       if (shouldUpdate) {
         const myUrl = `${API_BASE_URL}biz/contacts/${currentUser.ID}`;
         const method = "PUT";
@@ -117,13 +116,13 @@ const Home = () => {
   };
 
   const deleteUser = (id: number) => {
-    const currentUser = user.filter((item) => item.ID === id).pop()
+    const currentUser = filteredUsers.filter((item) => item.ID === id).pop()
     const myUrl = `${API_BASE_URL}biz/contacts/${currentUser!.ID}`;
     const method = "DELETE";
     apiCall(method, myUrl, "");
     setIsEdited(prev => prev.filter((_: boolean, index: number) => index != id));
     showToast("Sletter bruker");
-    refresh(); 
+    refresh();
   };
 
   const addInputFields = () => {
@@ -139,8 +138,8 @@ const Home = () => {
         },
       },
     };
-    setUser((prevUsers) => [...prevUsers, newUser]);
-    setFilteredUsers((prevUser) => [...prevUser, newUser])
+    setApiUser((prevUsers) => [...prevUsers, newUser]);
+    setFilteredUsers((prevUser) => [...prevUser, newUser]);
     setIsEdited((prevUser) => [...prevUser, false]);
     editContacts();
     setNewUser();
@@ -167,6 +166,11 @@ const Home = () => {
       newState[id] = true;
       return newState;
     });
+    setFilteredIsEdited((prevState) => {
+      const newState = [...prevState];
+      newState[id] = true;
+      return newState;
+    })
   };
 
   const handleInputChange = (
@@ -174,7 +178,7 @@ const Home = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = event.target;
-    setUser((prevState) => {
+    setFilteredUsers((prevState) => {
       const newState = [...prevState];
       if (name === "Number") {
         newState[id] = {
@@ -211,8 +215,8 @@ const Home = () => {
 
   const changeButtonText = () => {
     if (buttonText === "Lagre") {
-      submit();
       setButtonText("Legg til");
+      submit();
     } else {
       addInputFields();
       setButtonText("Lagre");
@@ -221,7 +225,7 @@ const Home = () => {
 
   const refresh = () => {
     setTimeout(() => window.location.reload(), 2000);
-  }
+  };
 
   const showToast = (text: string) => {
     toast(text, {
@@ -231,12 +235,17 @@ const Home = () => {
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-   const search = event.target.value;
-   setQuery(search);
-   const filtered = user.filter((currentUser) => currentUser.Info.Name.toLowerCase().includes(search.toLowerCase()));
-   setFilteredUsers(filtered);
-  }
-  
+    const search = event.target.value;
+    setQuery(search);
+    const filtered = apiUser.filter((currentUser) =>
+      currentUser.Info.Name.toLowerCase().includes(search.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+    setFilteredIsEdited(
+      isEdited.filter((_, index) => filtered.includes(apiUser[index]))
+    );
+  };
+
   return (
     <>
       <Navbar />
@@ -245,43 +254,49 @@ const Home = () => {
       <div className="root">
         <div className="container">
           <h2 className="header">Mine Kontakter</h2>
-          <input type="search" placeholder="Søk etter kontakter" value={query} onChange={handleSearch}></input>
-          <ul>
-            {filteredUsers.map((currentUser, id) => (
-              <li key={currentUser.InfoID}>
-                <input
-                  type="text"
-                  name="Name"
-                  readOnly={isEditMode}
-                  onChange={(e) => handleInputChange(id, e)}
-                  defaultValue={currentUser.Info.Name}
-                  style={!isEditMode ? { border: "1px solid black" } : {}}
-                />
-                <input
-                  type="text"
-                  name="Number"
-                  readOnly={isEditMode}
-                  onChange={(e) => handleInputChange(id, e)}
-                  defaultValue={currentUser!.Info.DefaultPhone.Number}
-                  style={!isEditMode ? { border: "1px solid black" } : {}}
-                />
-                {!isEditMode ? (
-                  <Button text={"Slett"} onClick={() => deleteUser(currentUser.ID)} />
-                ) : (
-                  ""
-                )}
-              </li>
-            ))}
-          </ul>
+          <input
+            className="search"
+            type="search"
+            placeholder="Søk etter kontakter"
+            value={query}
+            onChange={handleSearch}
+          ></input>
+          <div className="listContainer">
+            <ul>
+              {filteredUsers.map((currentUser, id) => (
+                <li key={currentUser.InfoID}>
+                  <input
+                    type="text"
+                    name="Name"
+                    readOnly={isReadOnly}
+                    onChange={(e) => handleInputChange(id, e)}
+                    defaultValue={currentUser.Info.Name}
+                    style={!isReadOnly ? { border: "1px solid black" } : {}}
+                  />
+                  <input
+                    type="text"
+                    name="Number"
+                    readOnly={isReadOnly}
+                    onChange={(e) => handleInputChange(id, e)}
+                    defaultValue={currentUser!.Info.DefaultPhone.Number}
+                    style={!isReadOnly ? { border: "1px solid black" } : {}}
+                  />
+                  {!isReadOnly && (
+                    <button onClick={() => deleteUser(currentUser.ID)}>
+                      Slett
+                    </button>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="buttons">
             <div>
               <Button text={buttonText} onClick={changeButtonText} />
             </div>
             <div>
-              {isEditMode ? (
+              {isReadOnly && (
                 <Button text={"Endre kontakter"} onClick={editContacts} />
-              ) : (
-                ""
               )}
             </div>
           </div>
